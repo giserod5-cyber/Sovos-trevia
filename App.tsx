@@ -6,6 +6,7 @@ import Lobby from './components/Lobby';
 import QuestionView from './components/QuestionView';
 import Leaderboard from './components/Leaderboard';
 import FinalPodium from './components/FinalPodium';
+import { initAudio, playSuccess, playFailure } from './utils/audio';
 
 const SovosLogo = () => (
     <svg width="120" height="40" viewBox="0 0 148 41" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -21,6 +22,9 @@ export default function App() {
     const [questionStartTime, setQuestionStartTime] = useState(0);
 
     const handleStartQuiz = (name: string) => {
+        // Initialize audio context on first user interaction
+        initAudio();
+        
         const mainPlayer: Player = { id: Date.now().toString(), name, score: 0, lastAnswer: null };
         const botPlayers: Player[] = [
             { id: 'bot1', name: 'Alex', score: 0, lastAnswer: null },
@@ -39,6 +43,16 @@ export default function App() {
     };
 
     const handlePlayerAnswer = useCallback((playerId: string, answerIndex: number, question: Question) => {
+        // Play sound effects for the main player
+        if (!playerId.startsWith('bot')) {
+            const isCorrect = question.correctAnswers.includes(answerIndex);
+            if (isCorrect) {
+                playSuccess();
+            } else {
+                playFailure();
+            }
+        }
+
         setPlayers(prevPlayers => {
             const timeTaken = (Date.now() - questionStartTime) / 1000;
             const isCorrect = question.correctAnswers.includes(answerIndex);
@@ -123,6 +137,7 @@ export default function App() {
                 return <Lobby onStart={handleStartQuiz} />;
             case 'QUESTION':
                 return <QuestionView 
+                          key={currentQuestionIndex}
                           question={currentQuestion} 
                           onAnswer={(answerIndex) => handlePlayerAnswer(players[0].id, answerIndex, currentQuestion)}
                           questionNumber={currentQuestionIndex + 1}

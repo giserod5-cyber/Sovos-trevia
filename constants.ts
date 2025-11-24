@@ -6,6 +6,20 @@ export const ANSWER_REVEAL_TIMER = 5000; // 5 seconds to show leaderboard
 
 export const QUIZ_QUESTIONS: Question[] = [
     {
+        question: "Which of the following is NOT a core value?",
+        options: [
+            { text: "Be Collaborative", icon: 'triangle' },
+            { text: "Be Results-Driven", icon: 'diamond' },
+            { text: "Be Accountable", icon: 'circle' },
+            { text: "Be Prepared", icon: 'square' },
+        ],
+        correctAnswers: [3],
+        timeLimit: 15,
+        // Using a hosted image for reliability. 
+        // If you have the local file, change this back to: "/core-values.png"
+        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
         question: "What does Sovos do?",
         options: [
             { text: "Technology solutions for businesses to meet their tax & compliance needs", icon: 'triangle' },
@@ -16,17 +30,6 @@ export const QUIZ_QUESTIONS: Question[] = [
         correctAnswers: [0],
         timeLimit: 20,
         image: "https://picsum.photos/seed/sovos-tax/600/300"
-    },
-    {
-        question: "Which of the following is NOT a Sovos core value?",
-        options: [
-            { text: "Be collaborative", icon: 'triangle' },
-            { text: "Be accountable", icon: 'diamond' },
-            { text: "Be results-oriented", icon: 'circle' },
-            { text: "Be prepared", icon: 'square' },
-        ],
-        correctAnswers: [3],
-        timeLimit: 15,
     },
     {
         question: "What are our two e-learning platforms? (Select one of the correct options)",

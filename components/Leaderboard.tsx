@@ -20,6 +20,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ players, question }) => {
 
     return (
         <div className="w-full max-w-4xl text-white animate-fade-in flex flex-col gap-6">
+            <style>{`
+                @keyframes slideUpFade {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .animate-entry {
+                    opacity: 0; /* Start invisible */
+                    animation: slideUpFade 0.5s ease-out forwards;
+                }
+            `}</style>
+
             <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 text-center">
                 <h2 className="text-2xl font-bold mb-4">Correct Answer</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -35,7 +52,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ players, question }) => {
                 <h1 className="text-3xl font-black mb-4 text-center">Leaderboard</h1>
                 <ul className="space-y-3">
                     {sortedPlayers.map((player, index) => (
-                        <li key={player.id} className="flex items-center justify-between bg-white/10 p-3 rounded-lg transition-transform duration-300 hover:scale-102 hover:bg-white/20">
+                        <li 
+                            key={player.id} 
+                            className="flex items-center justify-between bg-white/10 p-3 rounded-lg transition-transform duration-300 hover:scale-102 hover:bg-white/20 animate-entry"
+                            style={{ animationDelay: `${index * 100}ms` }}
+                        >
                             <div className="flex items-center">
                                 <span className="text-xl font-bold w-8">{index + 1}</span>
                                 <span className="text-lg font-semibold">{player.name}</span>
