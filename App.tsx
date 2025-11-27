@@ -30,29 +30,6 @@ export default function App() {
         setGameState('WAITING_ROOM');
     };
 
-    // Simulate players joining in the waiting room
-    useEffect(() => {
-        if (gameState === 'WAITING_ROOM') {
-            const botNames = ['Alex', 'Maria', 'David', 'Sarah', 'James'];
-            let timeouts: ReturnType<typeof setTimeout>[] = [];
-            
-            botNames.forEach((name, index) => {
-                // Bots join gradually over 2-8 seconds
-                const delay = (index + 1) * 1500 + Math.random() * 1000;
-                const timeout = setTimeout(() => {
-                    setPlayers(prev => {
-                        // Prevent duplicates
-                        if (prev.find(p => p.name === name)) return prev;
-                        return [...prev, { id: `bot-${index}`, name, score: 0, lastAnswer: null }];
-                    });
-                }, delay);
-                timeouts.push(timeout);
-            });
-
-            return () => timeouts.forEach(clearTimeout);
-        }
-    }, [gameState]);
-
     const handleStartGame = () => {
         setCurrentQuestionIndex(0);
         setGameState('QUESTION');
@@ -101,29 +78,6 @@ export default function App() {
             });
         });
     }, [questionStartTime]);
-
-    // Bot answering logic
-    useEffect(() => {
-        if (gameState === 'QUESTION') {
-            const question = QUIZ_QUESTIONS[currentQuestionIndex];
-            const bots = players.filter(p => p.id.startsWith('bot'));
-            
-            bots.forEach(bot => {
-                const answerDelay = Math.random() * (question.timeLimit - 2) * 1000 + 1000;
-                setTimeout(() => {
-                    const isCorrect = Math.random() > 0.25; // 75% chance to be correct
-                    let answerIndex;
-                    if (isCorrect) {
-                        answerIndex = question.correctAnswers[Math.floor(Math.random() * question.correctAnswers.length)];
-                    } else {
-                        const wrongAnswers = question.options.map((_, i) => i).filter(i => !question.correctAnswers.includes(i));
-                        answerIndex = wrongAnswers[Math.floor(Math.random() * wrongAnswers.length)];
-                    }
-                    handlePlayerAnswer(bot.id, answerIndex, question);
-                }, answerDelay);
-            });
-        }
-    }, [gameState, currentQuestionIndex, players, handlePlayerAnswer]);
 
     // Game state transition logic
     useEffect(() => {
