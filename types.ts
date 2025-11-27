@@ -1,5 +1,5 @@
 
-export type GameState = 'LOBBY' | 'QUESTION' | 'LEADERBOARD' | 'FINAL_PODIUM';
+export type GameState = 'LOBBY' | 'WAITING_ROOM' | 'QUESTION' | 'LEADERBOARD' | 'FINAL_PODIUM';
 
 export interface Player {
     id: string;

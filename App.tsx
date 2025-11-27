@@ -21,17 +21,39 @@ export default function App() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [questionStartTime, setQuestionStartTime] = useState(0);
 
-    const handleStartQuiz = (name: string) => {
+    const handleJoinLobby = (name: string) => {
         // Initialize audio context on first user interaction
         initAudio();
         
         const mainPlayer: Player = { id: Date.now().toString(), name, score: 0, lastAnswer: null };
-        const botPlayers: Player[] = [
-            { id: 'bot1', name: 'Alex', score: 0, lastAnswer: null },
-            { id: 'bot2', name: 'Maria', score: 0, lastAnswer: null },
-            { id: 'bot3', name: 'David', score: 0, lastAnswer: null },
-        ];
-        setPlayers([mainPlayer, ...botPlayers]);
+        setPlayers([mainPlayer]);
+        setGameState('WAITING_ROOM');
+    };
+
+    // Simulate players joining in the waiting room
+    useEffect(() => {
+        if (gameState === 'WAITING_ROOM') {
+            const botNames = ['Alex', 'Maria', 'David', 'Sarah', 'James'];
+            let timeouts: ReturnType<typeof setTimeout>[] = [];
+            
+            botNames.forEach((name, index) => {
+                // Bots join gradually over 2-8 seconds
+                const delay = (index + 1) * 1500 + Math.random() * 1000;
+                const timeout = setTimeout(() => {
+                    setPlayers(prev => {
+                        // Prevent duplicates
+                        if (prev.find(p => p.name === name)) return prev;
+                        return [...prev, { id: `bot-${index}`, name, score: 0, lastAnswer: null }];
+                    });
+                }, delay);
+                timeouts.push(timeout);
+            });
+
+            return () => timeouts.forEach(clearTimeout);
+        }
+    }, [gameState]);
+
+    const handleStartGame = () => {
         setCurrentQuestionIndex(0);
         setGameState('QUESTION');
     };
@@ -134,7 +156,13 @@ export default function App() {
 
         switch (gameState) {
             case 'LOBBY':
-                return <Lobby onStart={handleStartQuiz} />;
+            case 'WAITING_ROOM':
+                return <Lobby 
+                            onJoin={handleJoinLobby} 
+                            onStartGame={handleStartGame}
+                            players={players}
+                            gameState={gameState}
+                       />;
             case 'QUESTION':
                 return <QuestionView 
                           key={currentQuestionIndex}
@@ -152,7 +180,7 @@ export default function App() {
             case 'FINAL_PODIUM':
                 return <FinalPodium players={players} onPlayAgain={handleReset} />;
             default:
-                return <Lobby onStart={handleStartQuiz} />;
+                return <Lobby onJoin={handleJoinLobby} onStartGame={handleStartGame} players={[]} gameState="LOBBY" />;
         }
     }
 

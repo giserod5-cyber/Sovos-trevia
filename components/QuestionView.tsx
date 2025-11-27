@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Question } from '../types';
 import { TriangleIcon, DiamondIcon, CircleIcon, SquareIcon, MaximizeIcon, CloseIcon } from './icons';
@@ -124,7 +125,9 @@ const QuestionView: React.FC<QuestionViewProps> = ({ question, onAnswer, questio
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.onerror = null; // Prevent infinite loop
-                                target.src = "https://placehold.co/600x400?text=Image+Not+Found+Check+File+Path";
+                                // Helper to show which file is missing
+                                const fileName = question.image?.split('/').pop() || 'File';
+                                target.src = `https://placehold.co/600x400?text=Missing:+${fileName}`;
                             }}
                         />
                         <button 
